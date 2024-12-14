@@ -69,7 +69,12 @@ quality_mapping = {0: "Low", 1: "Medium", 2: "High"}
 
 # Display prediction
 st.subheader("Prediction")
-st.write(f"The predicted wine quality is: **{quality_mapping[prediction[0]]}**")
+predicted_quality = quality_mapping[prediction[0]]
+st.write(f"The predicted wine quality is: **{predicted_quality}**")
+
+if predicted_quality == "Medium" or predicted_quality == "High":
+    st.markdown("### Detailed Analysis")
+    st.markdown("The wine shows characteristics of higher quality based on its chemical composition.")
 
 # Display prediction probabilities
 st.subheader("Prediction Probabilities")
@@ -77,6 +82,16 @@ st.write("The probabilities for each quality label are:")
 pred_proba_df = pd.DataFrame(prediction_proba, columns=['Low', 'Medium', 'High'])
 st.write(pred_proba_df)
 
+# Highlight significant probability
+max_proba = np.max(prediction_proba)
+if max_proba > 0.7:
+    st.markdown(f"### Confidence: High
+                 The model is highly confident about this prediction (probability: {max_proba:.2f}).")
+else:
+    st.markdown(f"### Confidence: Moderate
+                 The model has moderate confidence in this prediction (probability: {max_proba:.2f}).")
+
 # Footer
 st.markdown("---")
 st.markdown("Developed with ❤️ Alfina Fitria")
+
