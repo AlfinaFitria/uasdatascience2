@@ -7,20 +7,18 @@ Original file is located at
     https://colab.research.google.com/drive/13rkE-sSkRl46j0laYibHKAtOJQz1-m6g
 """
 
-
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+import matplotlib.pyplot as plt
 
 # Load the trained model
 model = joblib.load('wine_quality_model.pkl')
 
 # Define the app title
 st.title("Wine Quality Prediction App")
-st.markdown("This app predicts the quality of wine (low, medium, or high) based on its chemical properties.")
+st.markdown("This app predicts the quality of wine (Low, Medium, or High) based on its chemical properties.")
 
 # Sidebar inputs
 st.sidebar.header("Input Features")
@@ -69,29 +67,21 @@ quality_mapping = {0: "Low", 1: "Medium", 2: "High"}
 
 # Display prediction
 st.subheader("Prediction")
-predicted_quality = quality_mapping[prediction[0]]
-st.write(f"The predicted wine quality is: **{predicted_quality}**")
-
-if predicted_quality == "Medium" or predicted_quality == "High":
-    st.markdown("### Detailed Analysis")
-    st.markdown("The wine shows characteristics of higher quality based on its chemical composition.")
+st.write(f"The predicted wine quality is: **{quality_mapping[prediction[0]]}**")
 
 # Display prediction probabilities
 st.subheader("Prediction Probabilities")
-st.write("The probabilities for each quality label are:")
 pred_proba_df = pd.DataFrame(prediction_proba, columns=['Low', 'Medium', 'High'])
-st.write(pred_proba_df)
 
-# Highlight significant probability
-max_proba = np.max(prediction_proba)
-if max_proba > 0.7:
-    st.markdown(f"### Confidence: High
-                 The model is highly confident about this prediction (probability: {max_proba:.2f}).")
-else:
-    st.markdown(f"### Confidence: Moderate
-                 The model has moderate confidence in this prediction (probability: {max_proba:.2f}).")
+# Visualize probabilities as a bar chart
+st.write("The probabilities for each quality label are:")
+fig, ax = plt.subplots()
+pred_proba_df.T.plot(kind='bar', legend=False, ax=ax)
+plt.xticks(range(len(pred_proba_df.columns)), ['Low', 'Medium', 'High'], rotation=0)
+plt.ylabel('Probability')
+plt.title('Prediction Probabilities')
+st.pyplot(fig)
 
 # Footer
 st.markdown("---")
-st.markdown("Developed with ❤️ Alfina Fitria")
-
+st.markdown("Developed with ❤️ by Alfina Fitria")
